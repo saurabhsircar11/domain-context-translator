@@ -1,0 +1,48 @@
+# Global
+*.log
+*.env
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Docker
+*.pid
+*.sock
+docker-compose.override.yml
+
+# React (frontend)
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.cache
+
+# Node.js (backend)
+backend/node_modules/
+backend/dist/
+backend/.env
+
+# Python (model)
+flask-api/__pycache__/
+flask-api/venv/
+flask-api/.env
+flask-api/models/
+
+# VSCode / IDEs
+.vscode/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+desktop.ini
