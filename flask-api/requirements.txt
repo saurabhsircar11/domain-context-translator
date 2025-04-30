@@ -1,0 +1,3 @@
+Flask
+flask-cors
+llama-cpp-python==0.2.60
