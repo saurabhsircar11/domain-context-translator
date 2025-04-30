@@ -7,7 +7,7 @@ const cors= require('cors');
 const app =  express();
 const port = 3000;
 
-const DEV_URL= 'http://localhost:5000/translate'
+const DEV_URL= 'http://flask-api:5000/translate'
 
 app.use(bodyParser.json());
 app.use(cors());

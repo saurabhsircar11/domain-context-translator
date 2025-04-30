@@ -76,14 +76,14 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 relative">
+    <div className="relative min-h-screen p-6 bg-gray-100">
       {/* Main UI */}
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-6 text-center">
+      <div className="max-w-4xl p-6 mx-auto bg-white rounded-lg shadow-md">
+        <h1 className="mb-6 text-2xl font-bold text-center">
           Domain-Specific Translation
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-3">
           <div>
             <label className="block mb-1 font-medium">Context</label>
             <select
@@ -145,25 +145,25 @@ function App() {
 
         <div className="flex flex-wrap gap-3 mb-6">
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
             onClick={onRequestTranslation}
           >
             Request Translation
           </button>
           <button
-            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+            className="px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700"
             onClick={() => downloadResults("txt")}
           >
             Download .txt
           </button>
           <button
-            className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700"
+            className="px-4 py-2 text-white bg-teal-600 rounded hover:bg-teal-700"
             onClick={() => downloadResults("csv")}
           >
             Download .csv
           </button>
           <button
-            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+            className="px-4 py-2 text-white bg-yellow-500 rounded hover:bg-yellow-600"
             onClick={copyToClipboard}
           >
             Copy All
@@ -172,9 +172,9 @@ function App() {
 
         {translations.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Results:</h2>
+            <h2 className="mb-2 text-xl font-semibold">Results:</h2>
             {translations.map((t, index) => (
-              <div key={index} className="bg-gray-50 p-4 border rounded mb-2">
+              <div key={index} className="p-4 mb-2 border rounded bg-gray-50">
                 <p>
                   <strong>Text {index + 1}:</strong>{" "}
                   {t.replace(/^.*?:/, "").trim()}
@@ -182,12 +182,12 @@ function App() {
                 <label className="block mt-2 text-sm font-medium">
                   Was this translation correct?
                 </label>
-                <div className="flex gap-2 items-center mt-1">
-                  <select className="border p-1 rounded">
+                <div className="flex items-center gap-2 mt-1">
+                  <select className="p-1 border rounded">
                     <option value="correct">Correct</option>
                     <option value="incorrect">Incorrect</option>
                   </select>
-                  <button className="text-sm px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+                  <button className="px-3 py-1 text-sm text-white bg-green-500 rounded hover:bg-green-600">
                     Submit Review
                   </button>
                 </div>
@@ -198,10 +198,10 @@ function App() {
       </div>
 
       {loading && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white px-6 py-4 rounded shadow-lg flex items-center gap-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="flex items-center gap-4 px-6 py-4 bg-white rounded shadow-lg">
             <svg
-              className="animate-spin h-6 w-6 text-blue-600"
+              className="w-6 h-6 text-blue-600 animate-spin"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -220,7 +220,7 @@ function App() {
                 d="M4 12a8 8 0 018-8v8H4z"
               />
             </svg>
-            <p className="text-blue-600 font-medium">
+            <p className="font-medium text-blue-600">
               Translating, please wait...
             </p>
           </div>
