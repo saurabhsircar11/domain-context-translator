@@ -32,7 +32,7 @@ function App() {
 
       const data = await response.json();
       setTranslations(data?.translations || []);
-    } catch (err) {
+    } catch {
       alert("Translation failed.");
     } finally {
       setLoading(false); // ← hide loader

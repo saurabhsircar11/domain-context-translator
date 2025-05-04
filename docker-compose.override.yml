@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev 
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+
+  flask-api:
+    build:
+      context: ./flask-api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./flask-api:/app
+    working_dir: /app
+    command: python app.py
+    environment:
+      - FLASK_ENV=development

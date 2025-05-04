@@ -1,0 +1,19 @@
+# flask-api/Dockerfile (development)
+
+FROM python:3.10-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    cmake \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Models are NOT downloaded here – assume they're mounted locally in dev
+
+CMD ["python", "app.py"]
