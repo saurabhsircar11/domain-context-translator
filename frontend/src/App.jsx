@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 function App() {
-  const [source, setSource] = useState("English");
-  const [target, setTarget] = useState("French");
-  const [context, setContext] = useState("Ecommerce");
+  const [source, setSource] = useState("english");
+  const [target, setTarget] = useState("french");
+  const [context, setContext] = useState("ecommerce");
   const [inputTexts, setInputTexts] = useState("");
   const [translations, setTranslations] = useState([]);
   const [loading, setLoading] = useState(false); // ← loader state
@@ -91,11 +91,11 @@ function App() {
               value={context}
               onChange={(e) => setContext(e.target.value)}
             >
-              <option value="Ecommerce">Ecommerce</option>
-              <option value="Legal">Legal</option>
-              <option value="Medical">Medical</option>
-              <option value="Technical">Technical</option>
-              <option value="Finance">Finance</option>
+              <option value="ecommerce">Ecommerce</option>
+              <option value="legal">Legal</option>
+              <option value="medical">Medical</option>
+              <option value="technical">Technical</option>
+              <option value="finance">Finance</option>
             </select>
           </div>
 
@@ -106,11 +106,11 @@ function App() {
               value={source}
               onChange={(e) => setSource(e.target.value)}
             >
-              <option value="English">English</option>
-              <option value="German">German</option>
-              <option value="French">French</option>
-              <option value="Spanish">Spanish</option>
-              <option value="Italian">Italian</option>
+              <option value="english">English</option>
+              <option value="german">German</option>
+              <option value="french">French</option>
+              <option value="spanish">Spanish</option>
+              <option value="italian">Italian</option>
             </select>
           </div>
 
@@ -121,11 +121,11 @@ function App() {
               value={target}
               onChange={(e) => setTarget(e.target.value)}
             >
-              <option value="English">English</option>
-              <option value="German">German</option>
-              <option value="French">French</option>
-              <option value="Spanish">Spanish</option>
-              <option value="Italian">Italian</option>
+              <option value="english">English</option>
+              <option value="german">German</option>
+              <option value="french">French</option>
+              <option value="spanish">Spanish</option>
+              <option value="italian">Italian</option>
             </select>
           </div>
         </div>
