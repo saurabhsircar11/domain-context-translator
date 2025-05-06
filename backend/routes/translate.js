@@ -3,7 +3,7 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
-router.post("/translate", auth, async (req, res) => {
+router.post("/", async (req, res) => {
   const { texts, source_lang, target_lang, context } = req.body;
 
   try {
@@ -21,4 +21,4 @@ router.post("/translate", auth, async (req, res) => {
   }
 });
 
-exports.module = router;
+module.exports = router;
