@@ -4,6 +4,7 @@ from llama_cpp import Llama
 import threading
 import queue
 import atexit
+import random
 
 
 from rag_utils import RAGRetriever
@@ -47,6 +48,7 @@ def translate_prompt(text, source_lang, target_lang, domain):
     for phrase, translation in retrieved:
         few_shot_lines.append(f"{phrase} → {translation}")
 
+    # 🧠 Instruction Setup
     prompt = (
         f"[INST] You are a professional translator specialized in the {domain} domain.\n"
         f"Your task is to translate short UI phrases from {source_lang} to {target_lang}.\n"
@@ -54,9 +56,13 @@ def translate_prompt(text, source_lang, target_lang, domain):
         f"Only return the translated phrase — do not explain.\n"
     )
 
+    print(few_shot_lines);
+
     if few_shot_lines:
-        prompt += "\nHere are some examples:\n"
+        prompt += "\nHere are some examples to guide you:\n"
         prompt += "\n".join(few_shot_lines)
+    else:
+        prompt += "\nNo prior examples are available — please rely on your domain knowledge.\n"
 
     prompt += f"\n\nNow translate:\n{text} [/INST]"
 
@@ -75,7 +81,13 @@ def inference_worker():
         text, source_lang, target_lang, domain, result_queue = job
         try:
             prompt = translate_prompt(text, source_lang, target_lang, domain)
-            output = llm(prompt, max_tokens=256)
+            output = llm(
+             prompt,
+             max_tokens=256,
+             temperature=round(random.uniform(0.15, 0.35), 2),
+             top_p=round(random.uniform(0.8, 0.95), 2),
+             repeat_penalty=1.05 + random.uniform(0.0, 0.1))
+
             response = output["choices"][0]["text"].strip()
             result_queue.put(response)
         except Exception as e:

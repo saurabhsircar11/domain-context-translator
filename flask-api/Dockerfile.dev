@@ -18,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # Use an entrypoint that runs preload_data then launches app
-CMD ["python preload_data.py && python app.py"]
+CMD ["sh", "-c", "python preload_data.py && python app.py"]
