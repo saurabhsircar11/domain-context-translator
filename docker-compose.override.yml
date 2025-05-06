@@ -7,13 +7,15 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - /app/node_modules  # Prevents node_modules overwrite
     working_dir: /app
     command: npm run dev
     ports:
       - "3006:3006"
     environment:
       - NODE_ENV=development
+    depends_on:
+      - backend
 
   backend:
     build:
@@ -23,8 +25,12 @@ services:
       - ./backend:/app
     working_dir: /app
     command: npm run dev
+    ports:
+      - "3000:3000"
     environment:
       - NODE_ENV=development
+    depends_on:
+      - flask-api
 
   flask-api:
     build:
@@ -33,6 +39,24 @@ services:
     volumes:
       - ./flask-api:/app
     working_dir: /app
-    command: python app.py
+    command: sh -c "python preload_data.py && python app.py"
+    ports:
+      - "5000:5000"
     environment:
       - FLASK_ENV=development
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000
+
+  chroma:
+    image: chromadb/chroma:latest
+    platform: linux/amd64
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+    restart: unless-stopped
+
+volumes:
+  chroma-data:

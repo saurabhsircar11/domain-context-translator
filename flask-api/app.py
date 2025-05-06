@@ -4,7 +4,12 @@ from llama_cpp import Llama
 import threading
 import queue
 import atexit
+import random
 
+
+from rag_utils import RAGRetriever
+
+retriever = RAGRetriever(collection_name="ui_phrases")
 # ------------------------------
 # Model Setup
 # ------------------------------
@@ -15,19 +20,58 @@ llm = Llama(
     model_path=MODEL_PATH,
     n_threads=4,
     n_ctx=2048,
-    temperature=0.7,
-    top_p=0.95,
-    repeat_penalty=1.1
+    temperature=0.1,     # Lowered from 0.7 → makes responses more focused and stable
+    top_p=0.85,           # Slightly narrowed sampling window
+    repeat_penalty=1.1   # You can keep this; it discourages repetitive phrasing
 )
 
 job_queue = queue.Queue()
 
 def translate_prompt(text, source_lang, target_lang, domain):
-    return (
-        f"[INST] You are a translator specialized in {domain}. "
-        f"Translate this sentence from {source_lang} to {target_lang}:\n"
-        f"{text} [/INST]"
+    domain = domain.lower()
+    lang_map = {
+        "english": "en",
+        "french": "fr",
+        "spanish": "es",
+        "german": "de",
+        "italian": "it"
+    }
+
+    target_code = lang_map.get(target_lang.lower())
+    if not target_code:
+        return f"[INST] ERROR: Unsupported target language '{target_lang}' [/INST]"
+
+    # 🔍 RAG: Retrieve similar phrases
+    retrieved = retriever.get_similar_examples(text, domain=domain, target_lang=target_code, top_k=3)
+
+    few_shot_lines = []
+    for phrase, translation in retrieved:
+        few_shot_lines.append(f"{phrase} → {translation}")
+
+    # 🧠 Instruction Setup
+    prompt = (
+        f"[INST] You are a professional translator specialized in the {domain} domain.\n"
+        f"Your task is to translate short UI phrases from {source_lang} to {target_lang}.\n"
+        f"Use clear, user-friendly language appropriate for a {domain} context.\n"
+        f"Only return the translated phrase — do not explain.\n"
     )
+
+    print(few_shot_lines);
+
+    if few_shot_lines:
+        prompt += "\nHere are some examples to guide you:\n"
+        prompt += "\n".join(few_shot_lines)
+    else:
+        prompt += "\nNo prior examples are available — please rely on your domain knowledge.\n"
+
+    prompt += f"\n\nNow translate:\n{text} [/INST]"
+
+    # Debug output
+    print("\n=== Generated Prompt ===\n")
+    print(prompt)
+    print("\n========================\n")
+
+    return prompt
 
 def inference_worker():
     while True:
@@ -37,7 +81,13 @@ def inference_worker():
         text, source_lang, target_lang, domain, result_queue = job
         try:
             prompt = translate_prompt(text, source_lang, target_lang, domain)
-            output = llm(prompt, max_tokens=256)
+            output = llm(
+             prompt,
+             max_tokens=256,
+             temperature=round(random.uniform(0.15, 0.35), 2),
+             top_p=round(random.uniform(0.8, 0.95), 2),
+             repeat_penalty=1.05 + random.uniform(0.0, 0.1))
+
             response = output["choices"][0]["text"].strip()
             result_queue.put(response)
         except Exception as e:

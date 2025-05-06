@@ -1,9 +1,10 @@
-# flask-api/Dockerfile (development)
+# flask-api/Dockerfile.dev
 
 FROM python:3.10-slim
 
 WORKDIR /app
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
@@ -11,9 +12,10 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Models are NOT downloaded here – assume they're mounted locally in dev
 
-CMD ["python", "app.py"]
+# Use an entrypoint that runs preload_data then launches app
+CMD ["sh", "-c", "python preload_data.py && python app.py"]
