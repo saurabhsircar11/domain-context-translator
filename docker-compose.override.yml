@@ -2,33 +2,48 @@ version: '3.9'
 
 services:
   frontend:
-    build:
+    build: 
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # Prevents node_modules overwrite
+    working_dir: /app
+    command: npm run dev
     ports:
-      - "5173:80"
-    restart: unless-stopped
+      - "3006:3006"
+    environment:
+      - NODE_ENV=development
     depends_on:
       - backend
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev 
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: npm run dev
     ports:
       - "3000:3000"
-    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
     depends_on:
       - flask-api
 
   flask-api:
     build:
       context: ./flask-api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./flask-api:/app
+    working_dir: /app
+    command: sh -c "python preload_data.py && python app.py"
     ports:
       - "5000:5000"
-    restart: unless-stopped
     environment:
+      - FLASK_ENV=development
       - CHROMA_HOST=chroma
       - CHROMA_PORT=8000
 
@@ -42,14 +57,6 @@ services:
     environment:
       - IS_PERSISTENT=TRUE
     restart: unless-stopped
-  mongo:
-    image: mongo:7
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: secret    
 
 volumes:
   chroma-data:
