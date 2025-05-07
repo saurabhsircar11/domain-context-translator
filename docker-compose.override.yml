@@ -14,8 +14,6 @@ services:
       - "3006:3006"
     environment:
       - NODE_ENV=development
-    depends_on:
-      - backend
 
   backend:
     build:
@@ -29,8 +27,6 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    depends_on:
-      - flask-api
 
   flask-api:
     build:

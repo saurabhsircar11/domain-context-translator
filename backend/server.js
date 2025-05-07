@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -10,7 +11,7 @@ const cors = require("cors");
 
 const app = express();
 const port = 3000;
-require("dotenv").config();
+
 const connectDB = require("./config/db");
 const passport = require("passport");
 require("./config/passport");

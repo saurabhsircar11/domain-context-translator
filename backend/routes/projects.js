@@ -10,7 +10,7 @@ const FLASK_API = process.env.FLASK_API || "http://localhost:5000/translate";
  * POST /projects - create new translation project
  */
 router.post("/", isAuthenticated, async (req, res) => {
-  const { title, domain, sentences } = req.body;
+  const { title, domain, sentences, language } = req.body;
 
   try {
     const sourceTexts = sentences.map((s) => s.source);
@@ -18,8 +18,8 @@ router.post("/", isAuthenticated, async (req, res) => {
       FLASK_API,
       {
         texts: sourceTexts,
-        source_lang: "en",
-        target_lang: "fr",
+        source_lang: "English",
+        target_lang: language,
         context: domain,
       },
       { withCredentials: true }
@@ -29,7 +29,7 @@ router.post("/", isAuthenticated, async (req, res) => {
 
     const fullSentences = sourceTexts.map((source, i) => ({
       source,
-      translation: translations[i],
+      translated: translations[i],
       manuallyEdited: false,
     }));
 
@@ -83,22 +83,26 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 router.put("/:id", isAuthenticated, async (req, res) => {
   const { sentences } = req.body;
 
+  if (!Array.isArray(sentences)) {
+    return res.status(400).json({ error: "Invalid sentence list" });
+  }
+
   try {
     const project = await TranslationProject.findById(req.params.id);
     if (!project || project.userId !== req.user.userId) {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    // Update each sentence
     project.sentences = sentences.map((s) => ({
       source: s.source,
-      translation: s.translation,
+      translated: s.translated,
       manuallyEdited: true,
     }));
 
     await project.save();
     res.json(project);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to update project" });
   }
 });
@@ -108,12 +112,11 @@ router.put("/:id", isAuthenticated, async (req, res) => {
  */
 router.delete("/:id", isAuthenticated, async (req, res) => {
   try {
-    const project = await TranslationProject.findById(req.params.id);
+    const project = await TranslationProject.findByIdAndDelete(req.params.id);
     if (!project || project.userId !== req.user.userId) {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    await project.remove();
     res.json({ message: "Project deleted" });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete project" });

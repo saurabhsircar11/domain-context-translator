@@ -8,8 +8,6 @@ services:
     ports:
       - "5173:80"
     restart: unless-stopped
-    depends_on:
-      - backend
 
   backend:
     build:
@@ -18,8 +16,6 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
-    depends_on:
-      - flask-api
 
   flask-api:
     build:

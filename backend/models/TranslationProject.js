@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const SentenceSchema = new mongoose.Schema({
   source: { type: String, required: true },
-  translation: { type: String, required: true },
+  translated: { type: String, required: true },
   manuallyEdited: { type: Boolean, default: false },
 });
 
