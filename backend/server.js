@@ -1,35 +1,35 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const axios = require("axios");
+const cookieParser = require("cookie-parser");
+const translateRoute = require("./routes/translate");
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
+const projectRoutes = require("./routes/projects");
 
 const cors = require("cors");
 
 const app = express();
 const port = 3000;
 
-const DEV_URL = "http://flask-api:5000/translate";
+const connectDB = require("./config/db");
+const passport = require("passport");
+require("./config/passport");
+connectDB();
 
+app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(cors());
-
-app.post("/translate", async (req, res) => {
-  const { texts, source_lang, target_lang, context } = req.body;
-
-  try {
-    const response = await axios.post(DEV_URL, {
-      texts,
-      source_lang,
-      target_lang,
-      context,
-    });
-    const { results } = response.data;
-    const translations = results.map(({ translated }) => translated);
-
-    res.json({ translations });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+app.use(
+  cors({
+    origin: "http://localhost:3006",
+    credentials: true,
+  })
+);
+app.use(passport.initialize());
+app.use("/api/auth", authRoutes);
+app.use("/api/translate", translateRoute);
+app.use("/api/user", userRoutes);
+app.use("/api/projects", projectRoutes);
 
 app.listen(port, () => {
   console.log(`Worker Started, PID:${process.pid}`);

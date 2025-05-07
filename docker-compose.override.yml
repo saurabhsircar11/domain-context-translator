@@ -14,8 +14,6 @@ services:
       - "3006:3006"
     environment:
       - NODE_ENV=development
-    depends_on:
-      - backend
 
   backend:
     build:
@@ -29,8 +27,6 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    depends_on:
-      - flask-api
 
   flask-api:
     build:
@@ -46,17 +42,3 @@ services:
       - FLASK_ENV=development
       - CHROMA_HOST=chroma
       - CHROMA_PORT=8000
-
-  chroma:
-    image: chromadb/chroma:latest
-    platform: linux/amd64
-    ports:
-      - "8000:8000"
-    volumes:
-      - chroma-data:/chroma/chroma
-    environment:
-      - IS_PERSISTENT=TRUE
-    restart: unless-stopped
-
-volumes:
-  chroma-data:

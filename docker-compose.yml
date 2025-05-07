@@ -8,8 +8,6 @@ services:
     ports:
       - "5173:80"
     restart: unless-stopped
-    depends_on:
-      - backend
 
   backend:
     build:
@@ -18,8 +16,6 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
-    depends_on:
-      - flask-api
 
   flask-api:
     build:
@@ -42,6 +38,14 @@ services:
     environment:
       - IS_PERSISTENT=TRUE
     restart: unless-stopped
+  mongo:
+    image: mongo:7
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret    
 
 volumes:
   chroma-data:
