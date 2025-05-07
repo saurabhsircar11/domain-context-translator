@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const translateRoute = require("./routes/translate");
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
+const projectRoutes = require("./routes/projects");
 
 const cors = require("cors");
 
@@ -19,14 +20,15 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "http://localhost:3006", // ✅ Your React app
-    credentials: true, // ✅ Allow cookies to be sent
+    origin: "http://localhost:3006",
+    credentials: true,
   })
 );
 app.use(passport.initialize());
 app.use("/api/auth", authRoutes);
 app.use("/api/translate", translateRoute);
 app.use("/api/user", userRoutes);
+app.use("/api/projects", projectRoutes);
 
 app.listen(port, () => {
   console.log(`Worker Started, PID:${process.pid}`);
