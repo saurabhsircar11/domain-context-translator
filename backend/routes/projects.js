@@ -11,7 +11,7 @@ const FLASK_API = process.env.FLASK_API || "http://localhost:5000/translate";
  */
 router.post("/", isAuthenticated, async (req, res) => {
   const { title, domain, sentences, language } = req.body;
-
+  console.log();
   try {
     const sourceTexts = sentences.map((s) => s.source);
     const response = await axios.post(

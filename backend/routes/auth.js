@@ -20,12 +20,22 @@ router.get(
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
     });
 
     res.redirect(process.env.FRONTEND_DASHBOARD);
   }
 );
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+  });
+
+  res.json({ message: "Logged out" });
+});
 
 module.exports = router;

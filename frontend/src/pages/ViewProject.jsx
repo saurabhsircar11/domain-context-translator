@@ -37,10 +37,11 @@ const ViewProject = () => {
           >
             <p className="mb-2 text-sm text-gray-400">Sentence #{index + 1}</p>
             <p className="mb-2 font-medium text-gray-800">
-              EN: {sentence.source}
+              English: {sentence.source}
             </p>
             <p className="text-blue-700">
-              <span className="font-semibold">FR:</span> {sentence.translated}
+              <span className="font-semibold">Translated:</span>{" "}
+              {sentence.translated}
             </p>
           </div>
         ))}

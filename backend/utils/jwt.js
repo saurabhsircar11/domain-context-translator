@@ -5,7 +5,7 @@ function generateToken(user) {
     {
       id: user._id,
       userId: user.userId,
-      name: user.displayName,
+      name: user.name,
       email: user.email,
     },
     process.env.JWT_SECRET,

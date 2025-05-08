@@ -9,8 +9,8 @@ async function handleOAuthLogin(profile, provider) {
     userId: profile.id,
     provider,
     name: profile.displayName,
-    email: profile.emails?.[0]?.value,
-    avatar: profile.photos?.[0]?.value,
+    email: profile.email,
+    avatar: profile.avatar,
   });
 }
 

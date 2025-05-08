@@ -11,7 +11,7 @@ const NewProject = () => {
     title: "",
     domain: "",
     sentences: "",
-    language: "french",
+    language: "",
   });
 
   const handleInputChange = (e) => {

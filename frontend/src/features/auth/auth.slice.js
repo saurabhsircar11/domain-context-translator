@@ -6,17 +6,18 @@ export const fetchCurrentUser = createAsyncThunk("auth/fetchUser", async () => {
   return res.data;
 });
 
+export const logout = createAsyncThunk("auth/logout", async () => {
+  const res = await axios.post("/api/auth/logout");
+  return res.data;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
     status: "idle",
   },
-  reducers: {
-    logout(state) {
-      state.user = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchCurrentUser.pending, (state) => {
@@ -29,9 +30,18 @@ const authSlice = createSlice({
       .addCase(fetchCurrentUser.rejected, (state) => {
         state.status = "failed";
         state.user = null;
+      })
+      .addCase(logout.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.status = "loggedOut";
+      })
+      .addCase(logout.rejected, (state) => {
+        state.status = "loggedOut";
       });
   },
 });
 
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;
