@@ -3,6 +3,8 @@ const router = express.Router();
 const axios = require("axios");
 const TranslationProject = require("../models/TranslationProject");
 const isAuthenticated = require("../middleware/auth");
+const { v4: uuidv4 } = require("uuid");
+const publishTranslationJob = require("../utils/publishTranslationJob");
 
 const FLASK_API = process.env.FLASK_API || "http://localhost:5000/translate";
 
@@ -13,38 +15,32 @@ router.post("/", isAuthenticated, async (req, res) => {
   const { title, domain, sentences, language } = req.body;
 
   try {
+    // Extract texts to translate
     const sourceTexts = sentences.map((s) => s.source);
-    const response = await axios.post(
-      FLASK_API,
-      {
-        texts: sourceTexts,
-        source_lang: "English",
-        target_lang: language,
-        context: domain,
-      },
-      { withCredentials: true }
-    );
 
-    const translations = response.data.results.map((r) => r.translated);
+    // Create unique job ID
+    const jobId = uuidv4();
 
-    const fullSentences = sourceTexts.map((source, i) => ({
-      source,
-      translated: translations[i],
-      manuallyEdited: false,
-    }));
-
-    const newProject = new TranslationProject({
+    // Publish job to RabbitMQ (async, non-blocking)
+    await publishTranslationJob({
+      jobId,
       userId: req.user.userId,
       title,
       domain,
-      sentences: fullSentences,
+      texts: sourceTexts,
+      source_lang: "English",
+      target_lang: language,
+      context: domain,
     });
 
-    await newProject.save();
-    res.status(201).json(newProject);
+    // Immediately respond with jobId, client should listen for completion via websocket or polling
+    res.status(202).json({
+      jobId,
+      message: "Translation job queued successfully. Listen for updates.",
+    });
   } catch (error) {
-    console.error("LLM or DB error:", error.message);
-    res.status(500).json({ error: "Failed to create project" });
+    console.error("Error queuing translation job:", error.message);
+    res.status(500).json({ error: "Failed to queue translation job" });
   }
 });
 
